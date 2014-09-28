@@ -1,0 +1,35 @@
+﻿@model PayMe2.ViewModels.Expenses.IndexViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<p>
+    <a href="@Url.Action("Create", new { id = Model.InstanceId })" class="btn btn-default">Add expense</a>
+</p>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Sum</th>
+            <th>Shop</th>
+            <th>Owner</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Expenses)
+        {
+            <tr>
+                <td>@item.Date</td>
+                <td>@item.Sum</td>
+                <td>@item.Shop</td>
+                <td>@item.OwnerId</td>
+                <td>@item.CategoryId</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

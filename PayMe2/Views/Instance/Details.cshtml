@@ -1,0 +1,28 @@
+﻿@model PayMe2.ViewModels.Instances.DetailsViewModel
+@{
+    ViewBag.Title = Model.Instance.Name;
+}
+
+<h1>@Model.Instance.Name</h1>
+
+<section>
+    <h2>Members</h2>
+    <ul>
+        @foreach (var item in Model.Users)
+        {
+            <li>@item.FirstName @item.LastName</li>
+        }
+    </ul>
+    <h2>History</h2>
+    <ul>
+        @foreach (var item in Model.LastChanges)
+        {
+            <li>@item.TimeUtc @item.EventType by @Model.GetName(item.UserId)</li>
+        }
+    </ul>
+    <h2>Actions</h2>
+    <ul>
+        <li>@Html.ActionLink("Register abscense", "Create", "Abscense", new { id = Model.Instance.Id }, null)</li>
+        <li>@Html.ActionLink("Create category", "Create", "Category", new { id = Model.Instance.Id }, null)</li>
+    </ul>
+</section>

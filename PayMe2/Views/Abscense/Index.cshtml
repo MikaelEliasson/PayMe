@@ -1,0 +1,30 @@
+﻿@model PayMe2.ViewModels.Abscenses.IndexViewModel
+@{
+    ViewBag.Title = "Abscenses";
+}
+
+<h2>Abscenses</h2>
+
+<p>
+    <a href="@Url.Action("Create", new { id = Model.InstanceId })" class="btn btn-default">Add abscense</a>
+</p>
+
+<ul class="list-unstyled">
+    @foreach (var item in Model.Persons)
+    {
+        <li>
+            <h3>@item.User.FirstName @item.User.LastName</h3>
+            <p>
+                Total: @item.Sum days
+            </p>
+            <ul>
+                @foreach (var abs in item.Abscenses)
+                {
+                    <li>
+                        @abs.From.ToShortDateString() - @abs.To.ToShortDateString()
+                    </li>
+                }
+            </ul>
+        </li>
+    }
+</ul>

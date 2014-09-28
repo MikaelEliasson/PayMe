@@ -1,0 +1,26 @@
+﻿@model PayMe2.ViewModels.Instances.ListViewModel
+@{
+    ViewBag.Title = "Your groups";
+}
+
+<h1>Your groups</h1>
+@if(Model.Instances.Any()){
+<ul>
+    @foreach (var item in Model.Instances)
+    {
+        <li>@Html.ActionLink(item.Name, "Details", new { id = item.Id })</li>
+    }
+</ul>
+}else{
+    <p>
+        <em>- You don't have any groups yet!</em>
+    </p>
+}
+
+<p>
+    <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+    <a href="@Url.Action("Join")" type="button" class="btn btn-primary">Join new Group</a>
+
+    <!-- Indicates a successful or positive action -->
+    <a href="@Url.Action("Create")" type="button" class="btn btn-success">Create new Group</a>
+</p>
