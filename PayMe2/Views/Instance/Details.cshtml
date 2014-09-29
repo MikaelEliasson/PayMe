@@ -24,5 +24,13 @@
     <ul>
         <li>@Html.ActionLink("Register abscense", "Create", "Abscense", new { id = Model.Instance.Id }, null)</li>
         <li>@Html.ActionLink("Create category", "Create", "Category", new { id = Model.Instance.Id }, null)</li>
+        <li>@Html.ActionLink("Register expense", "Create", "Expense", new { id = Model.Instance.Id }, null)</li>
+    </ul>
+
+    <h2>Lists</h2>
+    <ul>
+        <li>@Html.ActionLink("Abscenses", "Index", "Abscense", new { id = Model.Instance.Id }, null)</li>
+        <li>@Html.ActionLink("Categories", "Index", "Category", new { id = Model.Instance.Id }, null)</li>
+        <li>@Html.ActionLink("Expenses", "Index", "Expense", new { id = Model.Instance.Id }, null)</li>
     </ul>
 </section>

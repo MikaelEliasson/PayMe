@@ -85,6 +85,10 @@
     <Compile Include="Migrations\201409221359367_Initial.Designer.cs">
       <DependentUpon>201409221359367_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201409291028306_AbscenseFix.cs" />
+    <Compile Include="Migrations\201409291028306_AbscenseFix.Designer.cs">
+      <DependentUpon>201409291028306_AbscenseFix.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -95,6 +99,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201409221359367_Initial.resx">
       <DependentUpon>201409221359367_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201409291028306_AbscenseFix.resx">
+      <DependentUpon>201409291028306_AbscenseFix.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -15,5 +15,7 @@ namespace PayMe2.ViewModels.Abscenses
         [Required]
         [DataType(DataType.Date)]
         public DateTime ToDate { get; set; }
+
+        public Guid InstanceId { get; set; }
     }
 }

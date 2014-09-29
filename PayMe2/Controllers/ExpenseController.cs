@@ -38,6 +38,7 @@ namespace PayMe2.Controllers
             {
                 return View(new CreateViewModel
                 {
+                    InstanceId = id,
                     Date = DateTime.Today,
                     Categories = db.Categories.AsNoTracking().Where(c => c.InstanceId == id).Select(c => new SelectListItem {  Text = c.Name, Value = c.Id.ToString() }).ToList(),
                     Users = GetUsersForListBox(id, db)

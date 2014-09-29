@@ -16,5 +16,7 @@ namespace PayMe2.ViewModels.Expenses
         public IEnumerable<SelectListItem> Categories { get; set; }
         public Guid[] AffectedUsers { get; set; }
         public IEnumerable<SelectListItem> Users { get; set; }
+
+        public Guid InstanceId { get; set; }
     }
 }

@@ -9,6 +9,10 @@
     <a href="@Url.Action("Create", new { id = Model.InstanceId })" class="btn btn-default">Add abscense</a>
 </p>
 
+
+
+
+
 <ul class="list-unstyled">
     @foreach (var item in Model.Persons)
     {
@@ -17,14 +21,27 @@
             <p>
                 Total: @item.Sum days
             </p>
-            <ul>
-                @foreach (var abs in item.Abscenses)
-                {
-                    <li>
-                        @abs.From.ToShortDateString() - @abs.To.ToShortDateString()
-                    </li>
-                }
-            </ul>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Description</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var abs in item.Abscenses)
+                    {
+                        <tr>
+                            <td>@abs.From.ToShortDateString()</td>
+                            <td>@abs.To.ToShortDateString()</td>
+                            <td>@abs.Description</td>
+                            <td>@Html.ActionLink("Edit", "Edit", new { id = Model.InstanceId, abscenseId = abs.Id })</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </li>
     }
 </ul>

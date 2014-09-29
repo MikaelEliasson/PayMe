@@ -45,8 +45,6 @@ namespace PayMe.Core
 
             m.Entity<Instance>().Property(x => x.Name).IsRequired();
             m.Entity<Instance>().Property(x => x.JoinCode).IsRequired();
-
-            m.Entity<Abscense>().HasKey(x => new { x.UserId, x.InstanceId, x.From });
         }
     }
 }
