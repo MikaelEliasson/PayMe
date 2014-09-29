@@ -44,12 +44,20 @@ namespace PayMe2.Controllers
                 {
                     u.Abscenses = (abscenses[u.Id] ?? Enumerable.Empty<Abscense>()).ToList();
                 }
+                var expenses = db.Expenses.AsNoTracking().Where(e => e.InstanceId == id).ToList();
+                var categories = db.Categories.AsNoTracking().Where(e => e.InstanceId == id).ToDictionary(c=> c.Id);
+                foreach (var e in expenses)
+	            {
+                    e.Category = categories[e.CategoryId];
+	            }
+
+
                 var joinUrl = Url.Action("Join", "Instance",
                        routeValues: new { id },
                        protocol: Request.Url.Scheme);
                 var userBalances = new ExpenseCalculator().CalculateBalances(instance, 
                     users, 
-                    db.Expenses.AsNoTracking().Include(x => x.Category).Where(e => e.InstanceId == id).ToList(), 
+                    expenses, 
                     db.Transfers.AsNoTracking().Where(t => t.InstanceId == id).ToList());
 
 
@@ -99,7 +107,7 @@ namespace PayMe2.Controllers
         [InputPage]
         public ActionResult Join(Guid id)
         {
-            return View(new JoinViewModel(){});
+            return View(new JoinViewModel() { });
         }
 
         [HttpPost]

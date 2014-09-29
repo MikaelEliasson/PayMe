@@ -20,7 +20,7 @@ namespace PayMe2.Controllers
             using (var db = Context.Create())
             {
                 var expenses = db.Expenses.AsNoTracking().Where(a => a.InstanceId == id).ToList();
-              
+
                 var persons = db.UserToInstanceMappings.Where(x => x.InstanceId == id).Select(x => x.User).ToDictionary(x => x.Id);
 
                 return View(new IndexViewModel
@@ -40,7 +40,7 @@ namespace PayMe2.Controllers
                 {
                     InstanceId = id,
                     Date = DateTime.Today,
-                    Categories = db.Categories.AsNoTracking().Where(c => c.InstanceId == id).Select(c => new SelectListItem {  Text = c.Name, Value = c.Id.ToString() }).ToList(),
+                    Categories = db.Categories.AsNoTracking().Where(c => c.InstanceId == id).Select(c => new SelectListItem { Text = c.Name, Value = c.Id.ToString() }).ToList(),
                     Users = GetUsersForListBox(id, db)
                 });
             }
@@ -62,6 +62,40 @@ namespace PayMe2.Controllers
                 }
             }
             return View(model);
+        }
+
+        public ActionResult CreateMany(Guid id)
+        {
+            using (var db = Context.Create())
+            {
+                return View(new CreateManyViewModel
+                {
+                    InstanceId = id,
+                    Categories = db.Categories.AsNoTracking().Where(c => c.InstanceId == id).ToList(),
+                    Users = GetUsersForListBox(id, db)
+                });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult CreateMany(Guid id, IEnumerable<CreateManyDto> dtos, CreateViewModel model)
+        {
+            using (var db = Context.Create())
+            {
+                var expenses = new List<CreateExpenseEvent>();
+                var audit = this.GetAudit();
+                foreach (var item in dtos)
+                {
+                    expenses.Add(ExpenseEventFactory.CreateExpense(id, Guid.NewGuid(), item.CategoryId, item.Shop, -item.Sum, item.Date, item.AffectedUsers, audit));
+                }
+                db.StoredEvents.AddRange(expenses.Select(e => StoredEvent.FromEvent(e)));
+                foreach (var ev in expenses)
+                {
+                    EventProcessor.Process(db, ev);
+                }
+                db.SaveChanges();
+                return RedirectToAction("Index", new { id = id });
+            }
         }
 
         private static List<SelectListItem> GetUsersForListBox(Guid id, Context db)

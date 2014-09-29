@@ -1,0 +1,126 @@
+﻿@model PayMe2.ViewModels.Expenses.CreateManyViewModel
+@{
+    ViewBag.Title = "Create expenses from bank information";
+}
+
+<h2>Create expenses from bank information</h2>
+<div ng-app ng-controller="AppCtrl">
+    @using (Html.BeginForm())
+    {
+        <table class="table table-striped" id="expenseTable">
+            <thead>
+                <tr>
+                    <th>Datum</th>
+                    <th>Shop</th>
+                    <th>Summa</th>
+                    <th>Typ</th>
+                    <th ng-repeat="user in users">{{user.Text}}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="dto in dtos">
+                    <td>
+                        <input type="text" ng-model="dto.Date" name="Dtos[{{$index}}].Date" />
+                    </td>
+                    <td>
+                        <input type="text" ng-model="dto.Shop" name="Dtos[{{$index}}].Shop" />
+                    </td>
+                    <td>
+                        <input type="text" ng-model="dto.Sum" name="Dtos[{{$index}}].Sum" />
+                    </td>
+                    <td>
+                        <select name="Dtos[{{$index}}].CategoryId" ng-change="selectCategory(dto)" ng-model="dto.CategoryId">
+                            @foreach (var item in Model.Categories)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </td>
+                    <td ng-repeat="user in dto.AffectedUsers">
+                        {{shortName(user.Text)}} <input name="Dtos[{{$parent.$index}}].AffectedUsers" type="checkbox" ng-model="user.Selected" value="{{user.Value}}" />
+                    </td>
+                    <td></td>
+                    <td>
+                        <a href="#" ng-click="remove(dto, $event)">Ta bort</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>
+            <input type="submit" value="Spara" />
+        </p>
+    }
+    <textarea ng-model="rawInput"></textarea>
+</div>
+@section scripts{
+    <script src="~/Scripts/angular.min.js"></script>
+    <script type="text/javascript">
+        var categories = @Model.ToJson(Model.Categories);
+        var users = @Model.ToJson(Model.Users);
+        function AppCtrl($scope) {
+            $scope.dtos = [];
+            $scope.rawInput = null;
+            $scope.shortName = function(text){
+                return text.match(/\b([A-Z])/g).join('');
+
+            };
+            $scope.remove = function (dto, event) {
+                event.preventDefault();
+                $scope.dtos.splice($scope.dtos.indexOf(dto), 1);
+            };
+            $scope.categories = categories;
+            $scope.users = users;
+
+            $scope.$watch("rawInput", function () {
+                if (!($scope.rawInput && $scope.rawInput.length)) {
+                    $scope.dtos = [];
+                    return;
+                }
+                var rows = $scope.rawInput.split('\n');
+                $scope.dtos = [];
+                for (var i = 0; i < rows.length; i++) {
+                    var row = rows[i];
+                    var columns = row.split('  ').filter(function(val){
+                        return val.replace(' ').length;
+                    });
+                    var dto = {
+                        Date: columns[1].trim(),
+                        Shop: columns[2].trim(),
+                        Sum: Number(columns[3].replace(',', '.').replace(/ /g, '')),
+                        CategoryId: $scope.categories[0].Id,
+                        AffectedUsers: users.map(function(u){
+                            return {
+                                Value : u.Value,
+                                Text : u.Text,
+                                Selected : false
+                            };
+                        })
+                    };
+                    if(dto.Sum < 0){
+                        setUsers(dto);
+                        $scope.dtos.push(dto);
+                    }else{
+                        console.log("filtered " + dto.Sum);   
+                    }
+
+                }
+            });
+
+            var setUsers = function(dto){
+                var cat = $scope.categories.filter(function(c){ return c.Id == dto.CategoryId; })[0];
+                var defaultUsers = cat.DefaultUsers && cat.DefaultUsers.length ? cat.DefaultUsers.split(';') : [];
+                for (var i = 0; i < dto.AffectedUsers.length; i++) {
+                    var user = dto.AffectedUsers[i];
+                    user.Selected = defaultUsers.length ? defaultUsers.indexOf(user.Value) != -1 : true;
+                }
+            };
+
+            $scope.selectCategory = function(dto){
+                setUsers(dto);
+            };
+
+        }
+    </script>
+}
