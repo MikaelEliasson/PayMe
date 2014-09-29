@@ -6,8 +6,8 @@
 <h2>Expenses</h2>
 <p>
     <a href="@Url.Action("Create", new { id = Model.InstanceId })" class="btn btn-default">Add expense</a>
+    <a href="@Url.Action("CreateMany", new { id = Model.InstanceId })" class="btn btn-default">Add expenses from bank account</a>
 </p>
-
 
 <table class="table table-striped">
     <thead>
@@ -17,6 +17,7 @@
             <th>Shop</th>
             <th>Owner</th>
             <th>Category</th>
+            <th>Affects</th>
         </tr>
     </thead>
     <tbody>
@@ -26,8 +27,9 @@
                 <td>@item.Date</td>
                 <td>@item.Sum</td>
                 <td>@item.Shop</td>
-                <td>@item.OwnerId</td>
-                <td>@item.CategoryId</td>
+                <td>@Model.Persons[item.OwnerId].GetName()</td>
+                <td>@Model.Categories[item.CategoryId].Name</td>
+                <th>@Model.GetUsers(item)</th>
             </tr>
         }
     </tbody>

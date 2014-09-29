@@ -22,12 +22,14 @@ namespace PayMe2.Controllers
                 var expenses = db.Expenses.AsNoTracking().Where(a => a.InstanceId == id).ToList();
 
                 var persons = db.UserToInstanceMappings.Where(x => x.InstanceId == id).Select(x => x.User).ToDictionary(x => x.Id);
+                var categories = db.Categories.Where(x => x.InstanceId == id).ToDictionary(x => x.Id);
 
                 return View(new IndexViewModel
                 {
                     Expenses = expenses.OrderBy(e => e.Created).ToList(),
                     InstanceId = id,
-                    Persons = persons
+                    Persons = persons,
+                    Categories = categories
                 });
             }
         }
