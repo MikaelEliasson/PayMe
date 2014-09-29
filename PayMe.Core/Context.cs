@@ -30,11 +30,9 @@ namespace PayMe.Core
         public DbSet<Instance> Instances { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Expense> Expenses { get; set; }
+        public DbSet<Transfer> Transfers { get; set; }
         public DbSet<UserToInstanceMapping> UserToInstanceMappings { get; set; }
         public DbSet<StoredEvent> StoredEvents { get; set; }
-        //public DbSet<Category> Categories { get; set; }
-        //public DbSet<Expense> Expenses { get; set; }
-        //public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Abscense> Abscenses { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder m)

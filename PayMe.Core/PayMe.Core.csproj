@@ -60,6 +60,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Calculations\ExpenseCalculator.cs" />
+    <Compile Include="Calculations\UserBalance.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Entities\Abscense.cs" />
     <Compile Include="Entities\ApplicationUser.cs" />
@@ -67,10 +69,11 @@
     <Compile Include="Entities\Expense.cs" />
     <Compile Include="Entities\Instance.cs" />
     <Compile Include="Entities\StoredEvent.cs" />
-    <Compile Include="Entities\Transaction.cs" />
+    <Compile Include="Entities\Transfer.cs" />
     <Compile Include="Entities\UserToInstanceMapping.cs" />
     <Compile Include="Eventprocessing\EventHandlerBase.cs" />
     <Compile Include="Eventprocessing\EventProcessor.cs" />
+    <Compile Include="Eventprocessing\SqlModel\TransferEventHandler.cs" />
     <Compile Include="Eventprocessing\SqlModel\AbscenseEventHandler.cs" />
     <Compile Include="Eventprocessing\SqlModel\ExpenseEventHandler.cs" />
     <Compile Include="Eventprocessing\SqlModel\CategoryEventHandler.cs" />
@@ -81,6 +84,7 @@
     <Compile Include="Events\CategoryEvents.cs" />
     <Compile Include="Events\EventBase.cs" />
     <Compile Include="Events\InstanceEvents.cs" />
+    <Compile Include="Events\TransferEvents.cs" />
     <Compile Include="Migrations\201409221359367_Initial.cs" />
     <Compile Include="Migrations\201409221359367_Initial.Designer.cs">
       <DependentUpon>201409221359367_Initial.cs</DependentUpon>
@@ -88,6 +92,10 @@
     <Compile Include="Migrations\201409291028306_AbscenseFix.cs" />
     <Compile Include="Migrations\201409291028306_AbscenseFix.Designer.cs">
       <DependentUpon>201409291028306_AbscenseFix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201409291208184_Transfers.cs" />
+    <Compile Include="Migrations\201409291208184_Transfers.Designer.cs">
+      <DependentUpon>201409291208184_Transfers.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -102,6 +110,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201409291028306_AbscenseFix.resx">
       <DependentUpon>201409291028306_AbscenseFix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201409291208184_Transfers.resx">
+      <DependentUpon>201409291208184_Transfers.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

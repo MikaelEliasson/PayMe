@@ -16,6 +16,7 @@ namespace PayMe.Core.Eventprocessing
             yield return new AbscenseEventHandler(db);
             yield return new CategoryEventHandler(db);
             yield return new ExpenseEventHandler(db);
+            yield return new TransferEventHandler(db);
         }
         public static void Process<T>(Context db, T ev) where T : EventBase
         {

@@ -1,0 +1,35 @@
+﻿@model PayMe2.ViewModels.Transfers.IndexViewModel
+@{
+    ViewBag.Title = "Transfers";
+}
+
+<h2>Transfers</h2>
+<p>
+    <a href="@Url.Action("Create", new { id = Model.InstanceId })" class="btn btn-default">Add transfer</a>
+</p>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Sum</th>
+            <th>From</th>
+            <th>To</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Transfers)
+        {
+            <tr>
+                <td>@item.Date</td>
+                <td>@item.Sum</td>
+                <td>@Model.Persons[item.FromUserId].GetName()</td>
+                <td>@Model.Persons[item.ToUserId].GetName()</td>
+                <td></td>
+            </tr>
+        }
+    </tbody>
+</table>
+

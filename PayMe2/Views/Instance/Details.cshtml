@@ -13,6 +13,9 @@
             <li>@item.FirstName @item.LastName</li>
         }
     </ul>
+    <p>
+        New members can join at @Model.JoinUrl with the code: @Model.Instance.JoinCode
+    </p>
     <h2>History</h2>
     <ul>
         @foreach (var item in Model.LastChanges)
@@ -32,5 +35,71 @@
         <li>@Html.ActionLink("Abscenses", "Index", "Abscense", new { id = Model.Instance.Id }, null)</li>
         <li>@Html.ActionLink("Categories", "Index", "Category", new { id = Model.Instance.Id }, null)</li>
         <li>@Html.ActionLink("Expenses", "Index", "Expense", new { id = Model.Instance.Id }, null)</li>
+        <li>@Html.ActionLink("Transfers", "Index", "Transfer", new { id = Model.Instance.Id }, null)</li>
     </ul>
+
+    <h2>Summary</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th />
+                <th>Har betalat totalt</th>
+                <th>Ska betala totalt</th>
+                <th>Saldo</th>
+                @foreach (var category in Model.Categories)
+                {
+                    <th>@category.Name</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var userbalance in Model.UserBalances)
+            {
+                <tr>
+                    <td>@userbalance.User.GetName()</td>
+                    <td>@userbalance.TotalAmountPaid.ToString("N2")</td>
+                    <td>@userbalance.TotalExpenses.ToString("N2")</td>
+                    <td class="@(userbalance.Balance < 0 ? "bad" : "good")">@userbalance.Balance.ToString("N2")</td>
+                    @foreach (var category in Model.Categories)
+                    {
+                        <td>
+                            @if (userbalance.ExpensesPerCategory.ContainsKey(category))
+                            {
+                                @userbalance.ExpensesPerCategory[category].ToString("N2")
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+            <tr>
+                <td><b>Totalt</b></td>
+                <td>@Model.UserBalances.Sum(ub => ub.TotalAmountPaid).ToString("N2")</td>
+                <td></td>
+                <td></td>
+                @foreach (var category in Model.Categories)
+                {
+                    <td>@Model.CalculateTotalExpense(category).ToString("N2")</td>
+                }
+            </tr>
+            <tr>
+                <td><b>Per dag</b></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                @foreach (var category in Model.Categories)
+                {
+                    if (category.Type == servus.core.Entities.CategoryType.BasedOnPresence)
+                    {
+                        <td>@Model.CalculateTotalExpensePerDay(category).ToString("N2")</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                }
+            </tr>
+        </tbody>
+    </table>
+
 </section>

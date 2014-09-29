@@ -12,6 +12,8 @@ using PayMe2.Infrastructure;
 using PayMe.Core.Entities;
 using PayMe.Core.Eventprocessing;
 using PayMe2.ViewModels;
+using PayMe2.Core.Calculations;
+using servus.core.Entities;
 
 namespace PayMe2.Controllers
 {
@@ -36,11 +38,27 @@ namespace PayMe2.Controllers
             using (var db = Context.Create())
             {
                 var instance = db.Instances.Find(id);
-                var users = db.UserToInstanceMappings.Where(m => m.InstanceId == id).Select(m => m.User).ToList();
+                var users = db.UserToInstanceMappings.AsNoTracking().Where(m => m.InstanceId == id).Select(m => m.User).ToList();
+                var abscenses = db.Abscenses.AsNoTracking().Where(a => a.InstanceId == id).ToLookup(x => x.UserId);
+                foreach (var u in users)
+                {
+                    u.Abscenses = (abscenses[u.Id] ?? Enumerable.Empty<Abscense>()).ToList();
+                }
+                var joinUrl = Url.Action("Join", "Instance",
+                       routeValues: new { id },
+                       protocol: Request.Url.Scheme);
+                var userBalances = new ExpenseCalculator().CalculateBalances(instance, 
+                    users, 
+                    db.Expenses.AsNoTracking().Include(x => x.Category).Where(e => e.InstanceId == id).ToList(), 
+                    db.Transfers.AsNoTracking().Where(t => t.InstanceId == id).ToList());
+
+
                 return View(new DetailsViewModel
                 {
+                    JoinUrl = joinUrl,
                     Instance = instance,
                     Users = users,
+                    UserBalances = userBalances,
                     LastChanges = db.StoredEvents
                                         .AsNoTracking()
                                         .Where(e => e.InstanceId == id)
