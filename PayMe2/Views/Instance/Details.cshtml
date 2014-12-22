@@ -6,46 +6,13 @@
 <h1>@Model.Instance.Name</h1>
 
 <section>
-    <h2>Members</h2>
-    <ul>
-        @foreach (var item in Model.Users)
-        {
-            <li>@item.FirstName @item.LastName</li>
-        }
-    </ul>
-    <p>
-        New members can join at @Model.JoinUrl with the code: @Model.Instance.JoinCode
-    </p>
-    <h2>History</h2>
-    <ul>
-        @foreach (var item in Model.LastChanges)
-        {
-            <li>@item.TimeUtc @item.EventType by @Model.GetName(item.UserId)</li>
-        }
-    </ul>
-    <h2>Actions</h2>
-    <ul>
-        <li>@Html.ActionLink("Register abscense", "Create", "Abscense", new { id = Model.Instance.Id }, null)</li>
-        <li>@Html.ActionLink("Create category", "Create", "Category", new { id = Model.Instance.Id }, null)</li>
-        <li>@Html.ActionLink("Register expense", "Create", "Expense", new { id = Model.Instance.Id }, null)</li>
-    </ul>
-
-    <h2>Lists</h2>
-    <ul>
-        <li>@Html.ActionLink("Abscenses", "Index", "Abscense", new { id = Model.Instance.Id }, null)</li>
-        <li>@Html.ActionLink("Categories", "Index", "Category", new { id = Model.Instance.Id }, null)</li>
-        <li>@Html.ActionLink("Expenses", "Index", "Expense", new { id = Model.Instance.Id }, null)</li>
-        <li>@Html.ActionLink("Transfers", "Index", "Transfer", new { id = Model.Instance.Id }, null)</li>
-    </ul>
-
-    <h2>Summary</h2>
     <table class="table table-striped">
         <thead>
             <tr>
                 <th />
-                <th>Har betalat totalt</th>
-                <th>Ska betala totalt</th>
-                <th>Saldo</th>
+                <th>Total paid</th>
+                <th>Should pay</th>
+                <th>Net</th>
                 @foreach (var category in Model.Categories)
                 {
                     <th>@category.Name</th>
@@ -82,11 +49,7 @@
                 }
             </tr>
             <tr>
-                <td><b>Per dag</b></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td colspan="4"><b>Per person and day</b></td>
                 @foreach (var category in Model.Categories)
                 {
                     if (category.Type == servus.core.Entities.CategoryType.BasedOnPresence)
@@ -101,5 +64,31 @@
             </tr>
         </tbody>
     </table>
+    <p>
+        New members can join at @Model.JoinUrl with the code: @Model.Instance.JoinCode
+    </p>
+    <h2>History</h2>
+    <ul>
+        @foreach (var item in Model.LastChanges)
+        {
+            <li>@item.TimeUtc @item.EventType by @Model.GetName(item.UserId)</li>
+        }
+    </ul>
+    <h2>Actions</h2>
+    <ul>
+        <li>@Html.ActionLink("Register abscense", "Create", "Abscense", new { instanceId = Model.Instance.Id }, null)</li>
+        <li>@Html.ActionLink("Create category", "Create", "Category", new { instanceId = Model.Instance.Id }, null)</li>
+        <li>@Html.ActionLink("Register expense", "Create", "Expense", new { instanceId = Model.Instance.Id }, null)</li>
+    </ul>
+
+    <h2>Lists</h2>
+    <ul>
+        <li>@Html.ActionLink("Abscenses", "Index", "Abscense", new { instanceId = Model.Instance.Id }, null)</li>
+        <li>@Html.ActionLink("Categories", "Index", "Category", new { instanceId = Model.Instance.Id }, null)</li>
+        <li>@Html.ActionLink("Expenses", "Index", "Expense", new { instanceId = Model.Instance.Id }, null)</li>
+        <li>@Html.ActionLink("Transfers", "Index", "Transfer", new { instanceId = Model.Instance.Id }, null)</li>
+    </ul>
+
+    
 
 </section>

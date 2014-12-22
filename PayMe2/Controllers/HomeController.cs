@@ -10,6 +10,10 @@ namespace PayMe2.Controllers
     {
         public ActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Instance");
+            }
             return View();
         }
 

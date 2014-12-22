@@ -15,57 +15,57 @@ namespace PayMe2.Controllers
     public class CategoryController : Controller
     {
         // GET: Category
-        public ActionResult Index(Guid id)
+        public ActionResult Index(Guid instanceId)
         {
             using (var db = Context.Create())
             {
-                var categories = db.Categories.AsNoTracking().Where(c => c.InstanceId == id).OrderBy(c => c.Name).ToList();
+                var categories = db.Categories.AsNoTracking().Where(c => c.InstanceId == instanceId).OrderBy(c => c.Name).ToList();
                 return View(new IndexViewModel
                 {
-                    InstanceId = id,
+                    InstanceId = instanceId,
                     Categories = categories,
-                    Users = db.UserToInstanceMappings.Where(x => x.InstanceId == id).Select(x => x.User).ToList().ToDictionary(x => x.Id)
+                    Users = db.UserToInstanceMappings.Where(x => x.InstanceId == instanceId).Select(x => x.User).ToList().ToDictionary(x => x.Id)
                 });
             }
         }
 
-        public ActionResult Create(Guid id)
+        public ActionResult Create(Guid instanceId)
         {
             using (var db = Context.Create())
             {
                 return View(new CreateViewModel
                 {
-                    Users = GetUsersForListBox(id, db),
+                    Users = GetUsersForListBox(instanceId, db),
                 });
             }
         }
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult Create(Guid id, CreateViewModel model)
+        public ActionResult Create(Guid instanceId, CreateViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var ev = CategoryEventFactory.CreateCategory(id, Guid.NewGuid(), model.Name, model.DefaultUsers, model.Type, this.GetAudit());
+                var ev = CategoryEventFactory.CreateCategory(instanceId, Guid.NewGuid(), model.Name, model.DefaultUsers, model.Type, this.GetAudit());
                 using (var db = Context.Create())
                 {
                     db.StoredEvents.Add(StoredEvent.FromEvent(ev));
                     EventProcessor.Process(db, ev);
                     db.SaveChanges();
-                    return RedirectToAction("Index", new { id });
+                    return RedirectToAction("Index", new { instanceId });
                 }
             }
             using (var db = Context.Create())
             {
                 return View(new CreateViewModel
                 {
-                    Users = GetUsersForListBox(id, db),
+                    Users = GetUsersForListBox(instanceId, db),
                 });
             }
         }
 
-        private static List<SelectListItem> GetUsersForListBox(Guid id, Context db)
+        private static List<SelectListItem> GetUsersForListBox(Guid instanceId, Context db)
         {
-            return db.UserToInstanceMappings.AsNoTracking().Where(x => x.InstanceId == id).Select(x => x.User).OrderBy(x => x.FirstName).Select(x => new SelectListItem
+            return db.UserToInstanceMappings.AsNoTracking().Where(x => x.InstanceId == instanceId).Select(x => x.User).OrderBy(x => x.FirstName).Select(x => new SelectListItem
             {
                 Text = x.FirstName + " " + x.LastName,
                 Value = x.Id.ToString()

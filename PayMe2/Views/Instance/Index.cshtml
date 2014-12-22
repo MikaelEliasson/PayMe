@@ -8,7 +8,7 @@
 <ul>
     @foreach (var item in Model.Instances)
     {
-        <li>@Html.ActionLink(item.Name, "Details", new { id = item.Id })</li>
+        <li>@Html.ActionLink(item.Name, "Details", new { instanceId = item.Id })</li>
     }
 </ul>
 }else{

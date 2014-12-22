@@ -33,19 +33,19 @@ namespace PayMe2.Controllers
             }
         }
 
-        public ActionResult Details(Guid id)
+        public ActionResult Details(Guid instanceId)
         {
             using (var db = Context.Create())
             {
-                var instance = db.Instances.Find(id);
-                var users = db.UserToInstanceMappings.AsNoTracking().Where(m => m.InstanceId == id).Select(m => m.User).ToList();
-                var abscenses = db.Abscenses.AsNoTracking().Where(a => a.InstanceId == id).ToLookup(x => x.UserId);
+                var instance = db.Instances.Find(instanceId);
+                var users = db.UserToInstanceMappings.AsNoTracking().Where(m => m.InstanceId == instanceId).Select(m => m.User).ToList();
+                var abscenses = db.Abscenses.AsNoTracking().Where(a => a.InstanceId == instanceId).ToLookup(x => x.UserId);
                 foreach (var u in users)
                 {
                     u.Abscenses = (abscenses[u.Id] ?? Enumerable.Empty<Abscense>()).ToList();
                 }
-                var expenses = db.Expenses.AsNoTracking().Where(e => e.InstanceId == id).ToList();
-                var categories = db.Categories.AsNoTracking().Where(e => e.InstanceId == id).ToDictionary(c=> c.Id);
+                var expenses = db.Expenses.AsNoTracking().Where(e => e.InstanceId == instanceId).ToList();
+                var categories = db.Categories.AsNoTracking().Where(e => e.InstanceId == instanceId).ToDictionary(c=> c.Id);
                 foreach (var e in expenses)
 	            {
                     e.Category = categories[e.CategoryId];
@@ -53,12 +53,12 @@ namespace PayMe2.Controllers
 
 
                 var joinUrl = Url.Action("Join", "Instance",
-                       routeValues: new { id },
+                       routeValues: new { instanceId },
                        protocol: Request.Url.Scheme);
                 var userBalances = new ExpenseCalculator().CalculateBalances(instance, 
                     users, 
                     expenses, 
-                    db.Transfers.AsNoTracking().Where(t => t.InstanceId == id).ToList());
+                    db.Transfers.AsNoTracking().Where(t => t.InstanceId == instanceId).ToList());
 
 
                 return View(new DetailsViewModel
@@ -69,7 +69,7 @@ namespace PayMe2.Controllers
                     UserBalances = userBalances,
                     LastChanges = db.StoredEvents
                                         .AsNoTracking()
-                                        .Where(e => e.InstanceId == id)
+                                        .Where(e => e.InstanceId == instanceId)
                                         .OrderByDescending(e => e.TimeUtc)
                                         .Select(EventForList.Transform)
                                         .ToList()
@@ -98,28 +98,28 @@ namespace PayMe2.Controllers
                     db.StoredEvents.Add(StoredEvent.FromEvent(ev));
                     EventProcessor.Process(db, ev);
                     db.SaveChanges();
-                    return RedirectToAction("Details", new { id = ev.InstanceId.Value });
+                    return RedirectToAction("Details", new { instanceId = ev.InstanceId.Value });
                 }
             }
             return View(model);
         }
 
         [InputPage]
-        public ActionResult Join(Guid id)
+        public ActionResult Join(Guid instanceId)
         {
             return View(new JoinViewModel() { });
         }
 
         [HttpPost]
-        public ActionResult Join(Guid id, JoinViewModel model)
+        public ActionResult Join(Guid instanceId, JoinViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var ev = InstanceEventFactory.JoinEvent(id, this.GetAudit());
+                var ev = InstanceEventFactory.JoinEvent(instanceId, this.GetAudit());
 
                 using (var db = Context.Create())
                 {
-                    var ins = db.Instances.Find(id);
+                    var ins = db.Instances.Find(instanceId);
                     if (ins.JoinCode.Trim() != model.JoinCode.Trim())
                     {
                         ModelState.AddModelError("JoinCode", "The JoinCode was not correct");
@@ -129,7 +129,7 @@ namespace PayMe2.Controllers
                     db.StoredEvents.Add(StoredEvent.FromEvent(ev));
                     EventProcessor.Process(db, ev);
                     db.SaveChanges();
-                    return RedirectToAction("Details", new { id = ev.InstanceId.Value });
+                    return RedirectToAction("Details", new { instanceId = ev.InstanceId.Value });
                 }
             }
             return View(model);
