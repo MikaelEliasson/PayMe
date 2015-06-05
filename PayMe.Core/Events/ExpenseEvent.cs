@@ -41,6 +41,7 @@ namespace PayMe.Core.Events
         {
             return new EditExpenseEvent
             {
+                Date = date,
                 ExpenseId = expenseId,
                 CategoryId = categoryId,
                 Shop = shop,

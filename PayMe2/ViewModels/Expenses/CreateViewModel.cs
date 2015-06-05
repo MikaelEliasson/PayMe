@@ -2,6 +2,7 @@
 using servus.core.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -10,6 +11,7 @@ namespace PayMe2.ViewModels.Expenses
 {
     public class CreateViewModel
     {
+        [Required]
         public DateTime Date { get; set; }
         public decimal Sum { get; set; }
         public string Shop { get; set; }

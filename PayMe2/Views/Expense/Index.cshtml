@@ -30,6 +30,8 @@
                 <td>@Model.Persons[item.OwnerId].GetName()</td>
                 <td>@Model.Categories[item.CategoryId].Name</td>
                 <th>@Model.GetUsers(item)</th>
+                <td>@Html.ActionLink("Edit", "Edit", new { instanceId = Model.InstanceId, expenseId = item.Id})</td>
+                <td>@Html.ActionLink("Delete", "Delete", new { instanceId = Model.InstanceId, expenseId = item.Id })</td>
             </tr>
         }
     </tbody>

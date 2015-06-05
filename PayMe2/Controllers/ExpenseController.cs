@@ -100,6 +100,86 @@ namespace PayMe2.Controllers
             }
         }
 
+        public ActionResult Edit(Guid instanceId, Guid expenseId)
+        {
+
+            using (var db = Context.Create())
+            {
+                var userId = this.GetAudit().UserId;
+                var expense = db.Expenses.First(a => a.InstanceId == instanceId && a.Id == expenseId);
+                return View(new CreateViewModel
+                {
+                    InstanceId = instanceId,
+                    Date = expense.Date,
+                    Sum = expense.Sum,
+                    Shop = expense.Shop,
+                    Category = expense.CategoryId,
+                    Categories = db.Categories.AsNoTracking().Where(c => c.InstanceId == instanceId).Select(c => new SelectListItem { Text = c.Name, Value = c.Id.ToString() }).ToList(),
+                    Users = GetUsersForListBox(instanceId, db)
+                });
+            }
+
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult Edit(Guid instanceId, Guid expenseId, CreateViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                using (var db = Context.Create())
+                {
+                    var audit = this.GetAudit();
+                    var ev = ExpenseEventFactory.EditExpense(instanceId, expenseId, model.Category, model.Shop, model.Sum, model.Date, model.AffectedUsers, audit );
+                    db.StoredEvents.Add(StoredEvent.FromEvent(ev));
+                    EventProcessor.Process(db, ev);
+                    db.SaveChanges();
+                    return RedirectToAction("Index", new { instanceId });
+                }
+            }
+            return View(model);
+        }
+
+        public ActionResult Delete(Guid instanceId, Guid expenseId)
+        {
+
+            using (var db = Context.Create())
+            {
+                var userId = this.GetAudit().UserId;
+                var expense = db.Expenses.First(a => a.InstanceId == instanceId && a.Id == expenseId);
+                return View(new CreateViewModel
+                {
+                    InstanceId = instanceId,
+                    Date = expense.Date,
+                    Sum = expense.Sum,
+                    Shop = expense.Shop,
+                    Category = expense.CategoryId,
+                    Categories = db.Categories.AsNoTracking().Where(c => c.InstanceId == instanceId).Select(c => new SelectListItem { Text = c.Name, Value = c.Id.ToString() }).ToList(),
+                    Users = GetUsersForListBox(instanceId, db)
+                });
+            }
+
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult Delete(Guid instanceId, Guid expenseId, CreateViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                using (var db = Context.Create())
+                {
+                    var audit = this.GetAudit();
+                    var ev = ExpenseEventFactory.DeleteExpense(instanceId, expenseId, audit);
+                    db.StoredEvents.Add(StoredEvent.FromEvent(ev));
+                    EventProcessor.Process(db, ev);
+                    db.SaveChanges();
+                    return RedirectToAction("Index", new { instanceId });
+                }
+            }
+            return View(model);
+        }
+
         private static List<SelectListItem> GetUsersForListBox(Guid instanceId, Context db)
         {
             return db.UserToInstanceMappings.AsNoTracking().Where(x => x.InstanceId == instanceId).Select(x => x.User).OrderBy(x => x.FirstName).Select(x => new SelectListItem
